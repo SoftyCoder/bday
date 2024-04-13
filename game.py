@@ -20,7 +20,7 @@ screencolor = 16, 37, 66
 
 gift = pygame.image.load('assets/gift.png')
 gift_rect = gift.get_rect()
-gift_rect.x, gift_rect.y = 100, (720-gift_rect.width-20)
+gift_rect.x, gift_rect.y = 100, (720-gift_rect.width-5)
 
 
 #letters
@@ -80,15 +80,32 @@ Z_rect = Z.get_rect()
 
 #speed
 x_vel = 0
-y_vel = 0
-topspeed = 100
+
+topspeed = 10
 
 #lists
 letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 
            'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 
            'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
-falling_letter = letters[random.randint(0, 25)]
+completedLetters = [False, False, False, False]
+actualLetters = ['R','A', 'J', 'U']
+#generate random letter
+falling_letter1 = letters[random.randint(0, 25)]
+falling_letter2 = letters[random.randint(0, 25)]
+
+
+#generate random x for falling letters
+blah = random.randint(0, 1280)
+vars()[falling_letter1 + '_rect'].x = blah
+blah = random.randint(0, 1280)
+vars()[falling_letter2 + '_rect'].x = blah
+
+#velocites of letters
+y_vel1 = 0
+y_vel2 = 0
+
+
 state = 'game'
 
 
@@ -99,10 +116,11 @@ while running:
           if event.type == pygame.QUIT:
                running = False
      if state == 'game':
-
           screen.fill(screencolor)
           screen.blit(gift, gift_rect)
 
+
+          #BOX MOVEMENT
           keys = pygame.key.get_pressed()
           if keys[pygame.K_RIGHT] and x_vel <= topspeed:
                x_vel += 0.2 
@@ -112,17 +130,53 @@ while running:
                x_vel *= 0.95
 
           if gift_rect.x<=0 or gift_rect.x>=(1280-gift_rect.width):
-               x_vel = x_vel * -0.5
+               x_vel = x_vel * -1
 
-          
           gift_rect.x += x_vel
-     
           screen.blit(gift, gift_rect)
 
-          screen.blit(vars()[falling_letter], vars()[falling_letter + '_rect'])
-          if vars()[falling_letter + '_rect'].y <= 600:
-               vars()[falling_letter + '_rect'].y += y_vel
-          y_vel += 19
+
+          
+
+
+          #falling letters
+          #letter 1
+          if gift_rect.collidepoint(vars()[falling_letter1 + '_rect'].x, vars()[falling_letter1 + '_rect'].y) == False and completedLetters[0] == False:
+               screen.blit(vars()[falling_letter1], vars()[falling_letter1 + '_rect'])
+          elif gift_rect.collidepoint(vars()[falling_letter1 + '_rect'].x, vars()[falling_letter1 + '_rect'].y) == True:
+               completedLetters[0] = True
+               
+          if vars()[falling_letter1 + '_rect'].y <= (650):
+               vars()[falling_letter1 + '_rect'].y += y_vel1
+          y_vel1 += 0.25
+
+          if vars()[falling_letter1 + '_rect'].y > (650):
+               vars()[falling_letter1 + '_rect'].y = -50
+               y_vel1 = 0
+               #random x and letter
+               falling_letter1 = letters[random.randint(0, 25)]
+               vars()[falling_letter1 + '_rect'].x = random.randint(0, 1280)
+               
+          
+          #letter 2
+          if gift_rect.collidepoint(vars()[falling_letter2 + '_rect'].x, vars()[falling_letter2 + '_rect'].y) == False and completedLetters[1] == False:
+               screen.blit(vars()[falling_letter2], vars()[falling_letter2 + '_rect'])
+          elif gift_rect.collidepoint(vars()[falling_letter2 + '_rect'].x, vars()[falling_letter2 + '_rect'].y) == True:
+               completedLetters[1] = True
+               
+          if vars()[falling_letter2 + '_rect'].y <= (650):
+               vars()[falling_letter2 + '_rect'].y += y_vel1
+          y_vel2 += 0.25
+
+          if vars()[falling_letter2 + '_rect'].y > (650):
+               vars()[falling_letter2 + '_rect'].y = -50
+               y_vel2 = 0
+               #random x and letter
+               falling_letter2 = letters[random.randint(0, 25)]
+               vars()[falling_letter2 + '_rect'].x = random.randint(0, 1280)
+               
+
+
      # update the game's frame
      pygame.display.flip()
 
